@@ -71,6 +71,7 @@ X_single = df_single
 pred_prob = bst.predict(X_single, num_iteration=bst.best_iteration)
 prediction = 1 if pred_prob[0] >= 0.5 else 0
 
+print(le.classes_)
 if prediction == 1:
     print("食事を完食する可能性が高いです")
 else:
