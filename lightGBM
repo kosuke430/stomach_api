@@ -1,0 +1,69 @@
+import pandas as pd
+import lightgbm as lgb
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
+
+data = pd.read_csv('dataset.csv')
+
+
+le = LabelEncoder()
+data['性別'] = le.fit_transform(data['性別'])
+
+
+data['hour'] = pd.to_datetime(data['今の時間帯']).dt.hour
+data.drop('今の時間帯', axis=1, inplace=True)
+
+
+X = data.drop('食べれたか', axis=1)
+y = data['食べれたか']
+
+
+X_train, X_valid, y_train, y_valid = train_test_split(X, y, test_size=0.2, random_state=42)
+
+
+train_data = lgb.Dataset(X_train, label=y_train)
+valid_data = lgb.Dataset(X_valid, label=y_valid, reference=train_data)
+
+
+params = {
+    'boosting_type': 'gbdt',
+    'objective': 'binary',
+    'metric': 'binary_logloss',
+    'num_leaves': 31,
+    'learning_rate': 0.05,
+    'feature_fraction': 0.9
+}
+
+num_round = 100
+bst = lgb.train(params, train_data, num_round, valid_sets=[valid_data])
+
+
+
+
+single_data = {
+    '年齢': 25,
+    '性別': '男性',
+    '身長': 175.5,
+    '体重': 68.2,
+    '今の時間帯': '2023-08-23 15:30:00',
+    '空いた時間': 5.0,
+    '食べたカロリー': 450.0,
+    'これから食べるカロリー': 650.0
+}
+
+df_single = pd.DataFrame([single_data])
+df_single['hour'] = pd.to_datetime(df_single['今の時間帯']).dt.hour
+df_single['性別'] = le.transform(df_single['性別'])
+df_single.drop('今の時間帯', axis=1, inplace=True)
+
+X_single = df_single
+
+pred_prob = bst.predict(X_single, num_iteration=bst.best_iteration)
+prediction = 1 if pred_prob[0] >= 0.5 else 0
+
+if prediction == 1:
+    print("食事を完食する可能性が高いです")
+else:
+    print("完食しない可能性が高いです")
