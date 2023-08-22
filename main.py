@@ -1,27 +1,30 @@
-def data_pre(df):
-    nonnull_list = []
-    for col in df.columns:
-        nonnull = df[col].count()
-        if nonnull == 0:
-            nonnull_list.append(col)
-    df = df.drop(nonnull_list, axis=1)
+import glob
+import pandas as pd
+import numpy as np
+import lightgbm as lgb
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error as mae
 
-    df = df.drop("", axis=1)
+files = glob.glob("dataset.csv")
 
-    df = df.drop("", axis=1)
+r_file=pd.read_csv("dataset.csv")
 
-  
-    
+data_list = []
 
-    y_list = {}
+for file in files:
+    data_list.append(pd.read_csv(file, index_col=0))
+df = pd.concat(data_list)
+
+print(r_file.dtypes)
+
+df_train,df_val=train_test_split(df, test_size=0.2)
 
 
-    
+#データの前処理
 
 
-df_train, df_val =train_test_split(df, test_size=0.2)
-
-col = ""
+#トレーニング処理
+col = "食べれたか"
 train_y = df_train[col]
 train_x = df_train.drop(col, axis=1)
 
