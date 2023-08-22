@@ -15,9 +15,8 @@ def generate_data(n):
     data = []
     for _ in range(n):
         age = random.randint(18, 80)
-        gender = random.choice(0,1)
-        #0が女性,1が男性
-        if gender==0:
+        gender = random.choice(["男性", "女性"])
+        if gender=='女性':
             height = 155+round(random.uniform(0,100)/10, 1)
         else:
             height = 165+round(random.uniform(0,100)/10, 1)
@@ -56,12 +55,17 @@ def generate_data(n):
 # データを生成
 data = generate_data(10000)
 
+validate_data=generate_data(500)
+
 # データをDataFrameに変換
 df = pd.DataFrame(data, columns=["年齢", "性別", "身長", "体重","今の時間帯","空いた時間","食べたカロリー","これから食べるカロリー","食べれたか"])
+
+df_validate = pd.DataFrame(data, columns=["年齢", "性別", "身長", "体重","今の時間帯","空いた時間","食べたカロリー","これから食べるカロリー","食べれたか"])
 
 
 # データをCSVファイルに保存
 df.to_csv("dataset.csv", index=False)
+df_validate.to_csv("validate_data.csv",index=False)
 
 
 

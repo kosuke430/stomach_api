@@ -53,6 +53,8 @@ single_data = {
     'これから食べるカロリー': 650.0
 }
 
+
+
 df_single = pd.DataFrame([single_data])
 df_single['hour'] = pd.to_datetime(df_single['今の時間帯']).dt.hour
 df_single['性別'] = le.transform(df_single['性別'])
@@ -67,3 +69,8 @@ if prediction == 1:
     print("食事を完食する可能性が高いです")
 else:
     print("完食しない可能性が高いです")
+
+
+
+
+
